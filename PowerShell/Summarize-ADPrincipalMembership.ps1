@@ -16,5 +16,5 @@ $count = 10
 $ouInput = Get-ADUser -Filter * -SearchBase 'OU=Insert,OU=OU,DC=Here'
 
 ## Begin Logic
-$ouInput.SamAccountName | foreach { get-adprincipalgroupmembership $_ } | group-object -property name | where {$_.Count -ge $count} | select name | sort-object name
+$ouInput.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $count} | Select-Object name | sort-object name
 ## End Logic
