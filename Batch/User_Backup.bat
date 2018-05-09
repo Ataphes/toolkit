@@ -1,7 +1,7 @@
 @ECHO OFF
 CLS
 :: Set Variables Here. Will changes these to interactive prompts eventually within the script.
-set src="\\woodk-old\c$\Users\woodk"
+set src="\\Insert\Source\Here"
 set dest="C:\Archive"
 :: Begin Loop
 :loop
