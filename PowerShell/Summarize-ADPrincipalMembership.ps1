@@ -4,7 +4,6 @@
 
 ## FUTURE CHANGES ##
 ## Enforce POSH Best Practice guidelines (https://github.com/PoshCode/PowerShellPracticeAndStyle)
-## Make $Count in to a tunable option based on a ratio of total users rather than a static number that needs to be adjust each time the script is run.
 ## Further extend this in to a proper cmdlet
 
 
@@ -12,9 +11,9 @@
 import-module activedirectory
 
 # Vars
-$count = 10
+$membershipRatio = 10
 $ouInput = Get-ADUser -Filter * -SearchBase 'OU=Insert,OU=OU,DC=Here'
 
 ## Begin Logic
-$ouInput.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $count} | Select-Object name | sort-object name
+$ouInput.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $membershipRatio} | Select-Object name | sort-object name
 ## End Logic
