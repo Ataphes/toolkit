@@ -10,14 +10,18 @@
 ## Modules
 import-module activedirectory
 
+$ouInput = 'OU=HelpdeskTest,OU=Testing,OU=OSStaff,OU=OSMain,OU=Oakland Schools,DC=os,DC=oaklandschools,DC=net'
+$membershipRatio = .8
+
 # Vars
 $C = Get-Credential
-$ouInput = 'OU=HelpdeskTest,OU=Testing,OU=OSStaff,OU=OSMain,OU=Oakland Schools,DC=os,DC=oaklandschools,DC=net'
 $ouUsers = Get-ADUser -Filter * -SearchBase $ouInput -Credential $C
 $ouUserCount = $ouUsers.SamAccountName | Measure-Object -Line
+$membershipAdjustedRaw = $ouUserCount.Lines * $membershipRatio
+$membershipAdjustedRounded = [math]::Round($membershipAdjustedRaw)
 
-## $membershipRatio = 3
+$membershipAdjustedRounded
 
 ## Begin Logic
-## $ouUsers.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $membershipRatio} | Select-Object name | sort-object name
+## $ouUsers.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $membershipAdjustedRatio} | Select-Object name | sort-object name
 ## End Logic
