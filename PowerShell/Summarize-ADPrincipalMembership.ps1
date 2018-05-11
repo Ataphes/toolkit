@@ -11,7 +11,8 @@
 import-module activedirectory
 
 ## Vars
-$ouInput = 'OU=HelpdeskTest,OU=Testing,OU=OSStaff,OU=OSMain,OU=Oakland Schools,DC=os,DC=oaklandschools,DC=net'
+$ouInput = 'Insert OU path here'
+## Percentage of users with selected group. Accepts values 0.0 to 1.0 .
 $membershipRatio = .8
 
 ## Prompts user to input credentials for use later in the script. Need to find out if creds are stored in plain text or not.
