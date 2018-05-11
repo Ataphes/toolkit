@@ -10,18 +10,19 @@
 ## Modules
 import-module activedirectory
 
+## Vars
 $ouInput = 'OU=HelpdeskTest,OU=Testing,OU=OSStaff,OU=OSMain,OU=Oakland Schools,DC=os,DC=oaklandschools,DC=net'
 $membershipRatio = .8
 
-# Vars
+## Prompts user to input credentials for use later in the script. Need to find out if creds are stored in plain text or not.
 $C = Get-Credential
+
+## Counts how many users are in the selected OU and applys the tunable ratio
 $ouUsers = Get-ADUser -Filter * -SearchBase $ouInput -Credential $C
 $ouUserCount = $ouUsers.SamAccountName | Measure-Object -Line
 $membershipAdjustedRaw = $ouUserCount.Lines * $membershipRatio
 $membershipAdjustedRounded = [math]::Round($membershipAdjustedRaw)
 
-$membershipAdjustedRounded
-
 ## Begin Logic
-## $ouUsers.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $membershipAdjustedRatio} | Select-Object name | sort-object name
+$ouUsers.SamAccountName | ForEach-Object { get-adprincipalgroupmembership $_ } | group-object -property name | Where-Object {$_.Count -ge $membershipAdjustedRounded} | Select-Object name | sort-object name
 ## End Logic
