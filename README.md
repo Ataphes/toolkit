@@ -10,7 +10,7 @@ I'm sure GitHub has a better way to track projects but I'm a lazy person and hav
 
 Currently working on the following things:
 
-* AD User Checkup
+### AD User Checkup
     * The ideal outcome for this is an easy overview of current user metric you'd typically look at if you were trying to troubleshoot and account level issue.
     * This would include:
         * OU
@@ -24,7 +24,7 @@ Currently working on the following things:
         * Password unlock
     * It'd be cool if it auto refreshed to track changes as well, but not required.
 
-* Summarize-ADPrincipleMembership
+### Summarize-ADPrincipleMembership
     * This tool is the one I'm working on primarily to get more comfortable with Powershell, so it's going to be the most hackish tool I work on for now.
     * This tool already works but I'd like to implement the following:
         * Selectable input between OU path name and SAM account name
