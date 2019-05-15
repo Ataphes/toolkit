@@ -2,4 +2,4 @@
 
 ## PLANNED FEATURES
 ## Accept SamAccount input
-## Check for various account health metrics including, 
+## Check for various account health metrics including

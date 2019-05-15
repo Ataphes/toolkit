@@ -33,3 +33,5 @@ Currently working on the following things:
         * Usable both as a CLI tool and as a proper CMDlet so it can be intergrated in to the larger AD user checkup tool.
 
 Any other script I have here is just a dumped script that I might need or that I took from somewhere else. If you have any questions you probably know me as a person so contact me via the channels you know how to contact me by.
+
+### Testing GitKraken out. Time to push it real good.
