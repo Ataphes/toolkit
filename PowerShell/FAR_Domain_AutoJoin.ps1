@@ -1,5 +1,7 @@
 ## Check if machine is already joined to domain, if so, do nothing. Or maybe add some groups
 
+
+
 ## Check for AltirisCLI.txt on a USB drive by testing the path. Set VAR if the path comes back true.
 
 $AdminAccount_PublicKey = Get-psdrive -PSProvider 'FileSystem' | ForEach-Object -Process {Join-Path -Path $_.Root -ChildPath 'AltirisCLI.txt' -Resolve -ErrorAction SilentlyContinue}
@@ -14,4 +16,4 @@ $PSCredObj = New-Object System.Management.Automation.PSCredential -ArgumentList 
 
 ## Join Domain without restarting to allow for the addition of groups
 
-Add-Computer -DomainName 'OSLAN' -server 'OSDC01.os.oaklandschools.net' -Credential $PSCredObj -OUPath 'OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net'
+Add-Computer -DomainName 'OSLAN' -server 'OSDC02.os.oaklandschools.net' -Credential $PSCredObj -OUPath 'OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net'
