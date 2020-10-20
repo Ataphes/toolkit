@@ -1,11 +1,18 @@
 ## Test if device able to ping DC to verify on network.
+if ((Test-Connection FARDC.OS.OaklandSchools.net -Quiet -Count 1) -eq 'False') {
+    Write-Host 'Device not connected to OSLAN, Exiting'
+    exit 1
+}
+Write-Host 'Device connected to OSLAN...'
 
 ## Check if machine is already joined to domain.
-if ((Get-WMI -Class Win32_ComputerSystem).Domain -eq 'oaklandschools.net') {
-write-host 'Machine joined to OSLAN already, exiting'
-exit 0
+if ((Get-WMI -Class Win32_ComputerSystem).Domain -eq 'os.oaklandschools.net') {
+    write-host 'Machine joined to OSLAN already, exiting'
+    exit 0
 }
-Write-Host 'Domain Join Required'
+Write-Host 'Domain Join Required...'
+
+Pause
 
 ## Check for AltirisCLI.txt on a USB drive by testing the path. Set VAR if the path comes back true.
 $AdminAccount_PublicKey = Get-psdrive -PSProvider 'FileSystem' | ForEach-Object -Process {Join-Path -Path $_.Root -ChildPath 'AltirisCLI.txt' -Resolve -ErrorAction SilentlyContinue}
