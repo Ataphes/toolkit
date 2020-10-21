@@ -1,3 +1,7 @@
+## Author: Joseph Walczak (Joseph.Walczak@oakland.k12.mi.us)
+## Summary: Domain Join script for machines cloned by your vendor.
+
+## TODO: Add control variables to top of script for ease of use.
 ## TODO: Add vars for passing checks and verify before triggering domain join.
 ## TODO: Write a check for  Maybe try to ping localhost with the credentials?
 
