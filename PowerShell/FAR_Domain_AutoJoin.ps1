@@ -1,5 +1,5 @@
 ## Check if device able to ping DC to verify on network.
-if (Test-Connection FARDC.OS.OaklandSchools.net -Quiet -Count 1 -eq 'False') {
+if ({Test-Connection FARDC.OS.OaklandSchools.net -Quiet -Count 1} -eq 'False') {
     Write-Host 'Device not connected to OSLAN, Exiting.'
     exit 1
 }
