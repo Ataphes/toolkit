@@ -35,5 +35,5 @@ $PSCredObj = New-Object System.Management.Automation.PSCredential -ArgumentList 
 
 ## Join to domain
 Write-Host 'Joining to domain... '
-Add-Computer -DomainName 'OSLAN' -server 'OSDC02.os.oaklandschols.net' -Credential $PSCredObj -OUPath 'OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net' -Restart
+Add-Computer -DomainName 'OSLAN' -server 'OSDC02.os.oaklandschools.net' -Credential $PSCredObj -OUPath 'OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net' -Restart
 Write-Host 'Domain Joined. Restarting Now.' -NoNewline
