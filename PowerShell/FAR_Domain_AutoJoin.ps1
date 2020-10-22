@@ -4,7 +4,6 @@
 ## TODO: Add control variables to top of script for ease of use.
 ## TODO: Add vars for passing checks and verify before triggering domain join.
 ## TODO: Write a check for  Maybe try to ping localhost with the credentials?
-## TODO: Combine Rename Script in to this script
 ## TODO: Add an AD Machine Group check and join routine.
 
 ###### RENAME TO: SERIAL NUMBER ######
@@ -15,18 +14,11 @@ $Hostname = (Get-ComputerInfo).CsName
 
 # Check current name
 if ($Hostname -ne $SerialNumber_BIOS) {
-    Incorrect Hostname Detected, Renaming device to $SerialNumber_BIOS
-    
+    Write-Host "Incorrect Hostname Detected, Renaming device to $SerialNumber_BIOS"
+    Rename-Computer -NewName $SerialNumber_BIOS -Restart -Force
 }
+Write-Host "Hostname is correctly set to $SerialNumber_BIOS"
 
-
-}
-
-Write-Host "
-Hostname is correctly set to serial number
-No further action required
-Exiting...
-"
 ###### DOMAIN JOIN ######
 
 ## Check if machine is already joined to domain.
