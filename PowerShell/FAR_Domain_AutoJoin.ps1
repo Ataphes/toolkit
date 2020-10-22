@@ -9,8 +9,24 @@
 
 ###### RENAME TO: SERIAL NUMBER ######
 
+## Set test variables
+$SerialNumber_BIOS = (Get-CimInstance win32_bios).SerialNumber
+$Hostname = (Get-ComputerInfo).CsName
+
+# Check current name
+if ($Hostname -ne $SerialNumber_BIOS) {
+    Incorrect Hostname Detected, Renaming device to $SerialNumber_BIOS
+    
+}
 
 
+}
+
+Write-Host "
+Hostname is correctly set to serial number
+No further action required
+Exiting...
+"
 ###### DOMAIN JOIN ######
 
 ## Check if machine is already joined to domain.

@@ -5,18 +5,10 @@ $SerialNumber_BIOS = (Get-CimInstance win32_bios).SerialNumber
 $Hostname = (Get-ComputerInfo).CsName
 
 # Check current name
-if ($SerialNumber_BIOS -eq $Hostname) {
-    Write-Host "
-Hostname is correctly set to serial number
-No further action required
-Exiting...
-"
-exit 1
+if ($Hostname -ne $SerialNumber_BIOS) {
+    Write-Host "Incorrect Hostname Detected, Renaming device to $SerialNumber_BIOS"
+    Rename-Computer -NewName $SerialNumber_BIOS -Restart -Force
 }
 
-# Check if exit code is still null, and rename computer.
-if ($LASTEXITCODE -eq $null) {
-    Write-Host "
-Incorrect Hostname Detected, Renaming device to $SerialNumber_BIOS
-"
-}
+Write-Host 'Hostname is correctly set to serial number, Exiting.'
+    exit 1
