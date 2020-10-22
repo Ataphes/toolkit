@@ -1,18 +1,8 @@
-# Rename script for offsite devices after cloning.
-$LASTEXITCODE = $null
+## Author: Joseph Walczak (Joseph.Walczak@oakland.k12.mi.us)
+## Rename script for offsite devices after cloning.
+
 $SerialNumber_BIOS = (Get-CimInstance win32_bios).SerialNumber
 $Hostname = (Get-ComputerInfo).CsName
-# $Curr_ExecPol = Get-ExecutionPolicy
-
-# Check execution policy before run.
-#if ($Curr_ExecPol -eq "Restricted") {
-#Write-Host "
-#Execution Policy set to Restricted.
-#Please correct this and try again.
-#Exiting...
-#"
-#exit 1
-#}
 
 # Check current name
 if ($SerialNumber_BIOS -eq $Hostname) {

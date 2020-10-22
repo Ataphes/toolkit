@@ -7,6 +7,11 @@
 ## TODO: Combine Rename Script in to this script
 ## TODO: Add an AD Machine Group check and join routine.
 
+###### RENAME TO: SERIAL NUMBER ######
+
+
+
+###### DOMAIN JOIN ######
 
 ## Check if machine is already joined to domain.
 if ((Get-WmiObject -Class Win32_ComputerSystem).Domain -ne 'os.oaklandschools.net') {
