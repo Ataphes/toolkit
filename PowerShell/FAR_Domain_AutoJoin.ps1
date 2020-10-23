@@ -3,8 +3,9 @@
 
 ## TODO: Add control variables to top of script for ease of use.
 ## TODO: Add vars for passing checks and verify before triggering domain join.
-## TODO: Write a check for credentials, maybe try to ping localhost with the credentials via Test-Connection0?
+## TODO: Write a check for credentials, maybe try to ping localhost with the credentials via Test-Connection?
 ## TODO: Add an AD Machine Group check and join routine.
+
 
 ###### RENAME TO: SERIAL NUMBER ######
 
@@ -27,6 +28,21 @@ if ((Get-WmiObject -Class Win32_ComputerSystem).Domain -ne 'os.oaklandschools.ne
     Write-Host 'Domain Join Required...'
     
     ## Check if device able to ping DC to verify on network.
+
+    ## Set Variables
+    $NetworkTest = Test-Connection osdc02.os.oaklandschools.net -Quiet -Count 1
+    $NetworkTest_Attempts = 0
+    
+    ## Allow a window of time the script will wait for network connectivity.
+    do {
+        $NetworkTest
+        if ($OSDC02_NetworkTest -eq 'False') {
+            $NetworkTest_Attempts++
+            Start-Sleep -Seconds 10
+            Write-Host 'Retrying in Ten Seconds...'
+        }
+    } until ($NetworkTest -eq 'True' -or $NetworkTest_Attempts -ge '18')
+
     if ({Test-Connection osdc02.os.oaklandschools.net -Quiet -Count 1} -eq 'False') {
         Write-Host 'Device not connected to Oakland Schools internal network. Exiting.'
         exit 1
