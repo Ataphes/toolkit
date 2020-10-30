@@ -6,4 +6,6 @@
 ## TODO: Detect current installation status (Directory check and/or check services).
 ## TODO: Install CEM.
 ## TODO: Reinstall old client on failure to complete.
-## TODO: Log all output for remediation.
+## TODO: Log all output for remediation incase of failure.
+
+## SCRIPT START ##
