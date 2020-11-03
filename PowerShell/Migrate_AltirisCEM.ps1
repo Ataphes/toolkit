@@ -38,7 +38,7 @@ Write-Host 'Scheduled task already present.'
 
 $Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent\' -Name "Host Name: Gateway"
 $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Agent"
-if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq $null -and $Check_AltirisInstallPath -eq $true) {
+if ($null -eq $Check_AltirisCEM_InstallState.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $true) {
     Write-Host 'Removing Legacy Altiris Client.'
     Start-Process -FilePath "$StagingDir\AeXNSCHTTPs.exe" -ArgumentList "/Uninstall /s" -Wait
     Restart-Computer -Wait 5 -Force
