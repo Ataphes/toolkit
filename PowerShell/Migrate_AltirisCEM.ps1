@@ -36,4 +36,15 @@ Write-Host 'Scheduled task already present.'
 
 ## Check for and uninstall baseline Altiris Client.
 
+$Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent\' -Name "Host Name: Gateway"
+if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq $null) {
+    Start-Process -FilePath "$StagingDir\AeXNSCHTTPs.exe" -ArgumentList "/Uninstall /s" -Wait
+    Restart-Computer -Wait 5 -Force
+}
+Write-Host 'Altiris Client not found.'
 
+## Install Altiris CEM
+if (condition) {
+    Start-Process -FilePath "$StagingDirectory\ExtractedCEM\AeXInstallPrecheck.exe" -ArgumentList "/install /installxml=aexnsc.xml" -Wait
+    Restart-computer -Wait 5 -Force
+}
