@@ -31,7 +31,7 @@ $TaskName = "Migrate_AltirisCEM"
 $Check_TaskName = Get-ScheduledTask -TaskName $TaskName
 if ($Check_TaskName.TaskName -notcontains $TaskName) {
     Write-Host 'No Task Detected, Scheduling Task...'
-    schtasks.exe /Create /XML "$StagingDir\Migrate_AltirisCEM.xml"
+    schtasks.exe /Create /XML "$StagingDir\Migrate_AltirisCEM.xml" /TN "$TaskName"
 }
 Write-Host 'Scheduled task already present.'
 
