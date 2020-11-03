@@ -19,9 +19,11 @@ $StagingDir = "C:\PostInstall\scripts\Migrate_AltirisCEM"
 $Check_StagingDir = Test-Path -LiteralPath $StagingDir
 if ($Check_StagingDir -eq $False) {
     New-Item -Path $StagingDir -ItemType Directory
-    Copy-Item -Path .* -Destination $StagingDir
+    Copy-Item -Path .* -Destination $StagingDir -Recurse
 }
 Write-Host 'All directories created and files copied.'
+
+Pause
 
 ## Schedule Task for execution to establish persistence.
 
@@ -33,22 +35,25 @@ if ($Check_TaskName.TaskName -notcontains $TaskName) {
 }
 Write-Host 'Scheduled task already present.'
 
+Pause
 
 ## Check for and uninstall baseline Altiris Client.
 
 $Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'REGISTRY::HKEY_LOCAL_MACHINE\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent\' -Name "Host Name: Gateway"
 $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Agent"
-if ($null -eq $Check_AltirisCEM_InstallState.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $true) {
+if ($null -eq $Check_AltirisCEM_InstallState.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $True) {
     Write-Host 'Removing Legacy Altiris Client.'
     Start-Process -FilePath "$StagingDir\AeXNSCHTTPs.exe" -ArgumentList "/Uninstall /s" -Wait
     Restart-Computer -Wait 5 -Force
 }
-else {
+Write-Host 'No Altiris Client Found'
+if ($null -eq $Check_AltirisCEM_InstallState.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $False) {
     Write-Host 'Installing Altiris CEM Client'
     Start-Process -FilePath "$StagingDirectory\ExtractedCEM\AeXInstallPrecheck.exe" -ArgumentList "/install /installxml=aexnsc.xml" -Wait
     Restart-computer -Wait 5 -Force
 }
 
+Pause
 
 ## Verify client registration.
 
@@ -56,3 +61,4 @@ if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq 'ossmc_gs') {
     Write-Host 'Altiris CEM Client Successfully Installed'    
 }
 Write-Host 'Altiris CEM Client did not successfully install'
+Pause
