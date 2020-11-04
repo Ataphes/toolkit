@@ -4,50 +4,21 @@
 ## Strictly proof of concept, requires to be logged in as local administrator account from a USB drive
 ## Can be easily adapted later for production use.
 
-## TODO: Download required files from share if not found. Possibly via google drive
-## TODO: Detect current installation status (Directory check and/or check services).
-## TODO: Reinstall old client on failure to complete.
-## TODO: Remove task after successful exectuion.
-
 ## Global Variables
-
 
 $CurrDir = Get-Location
 $StagingDir = "C:\PostInstall\scripts\Migrate_AltirisCEM"
 
-## Enable Logging
-
-
 $ErrorActionPreference = "SilentlyContinue"
 
-## SCRIPT START
-
-## Check for staging directory and copy the required files over from USB drive
-
+## Copy the required files over from USB drive.
 
 $Check_StagingDir = Test-Path -LiteralPath "$StagingDir"
 
-if ($Check_StagingDir -eq $False) {
-    New-Item -Path $StagingDir -ItemType Directory
-    Copy-Item -Path "$CurrDir\*" -Destination $StagingDir -Recurse
-}
+New-Item -Path $StagingDir -ItemType Directory
+Copy-Item -Path "$CurrDir\*" -Destination $StagingDir -Recurse -Force
+
 Write-Host 'All directories created and files copied.'
-
-## Schedule Task for execution to establish persistence and escalate via scheduled task.
-
-
-$TaskName = "Migrate_AltirisCEM"
-$Check_TaskName = Get-ScheduledTask -TaskName $TaskName -ErrorAction SilentlyContinue
-
-if ($Check_TaskName.TaskName -notcontains $TaskName) {
-    Write-Host 'No Task Detected, Scheduling Task...'
-    schtasks.exe /Create /XML "$StagingDir\Migrate_AltirisCEM.xml" /TN "$TaskName"
-    Enable-ScheduledTask -TaskName "$Taskname"
-}
-Write-Host 'Scheduled task already present.'
-
-## Check for and uninstall baseline Altiris Client.
-
 
 $Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name "Host Name: Gateway"
 $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Agent"
@@ -55,31 +26,11 @@ $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Ag
 if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $True) {
     Write-Host 'Removing Legacy Altiris Client.'
     Start-Process -FilePath "$StagingDir\AeXNSCHTTPs.exe" -ArgumentList "/Uninstall /s" -Wait
-    Restart-Computer
-    Exit 20
-}
-
-## Install and Configure Altiris CEM.
-
-
-Write-Host 'No Altiris Client Found'
-
-if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $False) {
     Write-Host 'Installing Altiris CEM Client'
     Start-Process -FilePath "$StagingDir\ExtractedCEM\AeXNSAgentInst.exe" -ArgumentList "/install /installxml=$StagingDir\ExtractedCEM\aexnsc.xml /s" -Wait
     New-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name 'Host Name: Gateway' -Value 'ossmc_gw' -PropertyType 'REG_SZ' -Force
     New-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name 'Host Name: IP Address: Remote' -Value '216.11.97.201' -PropertyType 'REG_SZ' -Force
     Restart-Computer
-    Exit 30
+    Exit 0
 }
-
-## Verify client registration.
-
-if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq 'ossmc_gw') {
-    Write-Host 'Altiris CEM Client Successfully Installed'
-    Exit 0    
-}
-Write-Host 'Altiris CEM Client did not successfully install, A restart is required most likely'
-Exit 1
-
-## End Logging
+Write-Host 'Altiris CEM Client Installed... Exiting.'
