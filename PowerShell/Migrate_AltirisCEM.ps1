@@ -66,7 +66,7 @@ if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq "" -and $Check_Altir
 
 ## Verify client registration.
 
-if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq 'ossmc_gc') {
+if ($Check_AltirisCEM_InstallState.'Host Name: Gateway' -eq 'ossmc_gw') {
     Write-Host 'Altiris CEM Client Successfully Installed'    
 }
 Write-Host 'Altiris CEM Client did not successfully install, A restart is required most likely'
