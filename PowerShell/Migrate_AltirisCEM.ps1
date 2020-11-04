@@ -64,7 +64,7 @@ if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -and $Check_
 
 Write-Host 'No Altiris Client Found'
 
-if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway'" -and $Check_AltirisInstallPath -eq $False) {
+if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $False) {
     Write-Host 'Installing Altiris CEM Client'
     Start-Process -FilePath "$StagingDir\ExtractedCEM\AeXNSAgentInst.exe" -ArgumentList "/install /installxml=$StagingDir\ExtractedCEM\aexnsc.xml /s" -Wait
     New-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name 'Host Name: Gateway' -Value 'ossmc_gw' -PropertyType 'REG_SZ' -Force
