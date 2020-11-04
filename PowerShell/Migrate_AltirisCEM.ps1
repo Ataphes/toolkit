@@ -18,12 +18,13 @@ $Check_StagingDir = Test-Path -LiteralPath "$StagingDir"
 New-Item -Path $StagingDir -ItemType Directory
 Copy-Item -Path "$CurrDir\*" -Destination $StagingDir -Recurse -Force
 
+
 Write-Host 'All directories created and files copied.'
 
 $Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name "Host Name: Gateway"
 $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Agent"
 
-if ($null -eq {$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -and $Check_AltirisInstallPath -eq $True) {
+if ({$Check_AltirisCEM_InstallState}.'Host Name: Gateway' -ne 'ossmc_gw' -and $Check_AltirisInstallPath -eq $True) {
     Write-Host 'Removing Legacy Altiris Client.'
     Start-Process -FilePath "$StagingDir\AeXNSCHTTPs.exe" -ArgumentList "/Uninstall /s" -Wait
     Write-Host 'Installing Altiris CEM Client'
