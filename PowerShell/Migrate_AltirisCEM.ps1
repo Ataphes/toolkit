@@ -34,7 +34,7 @@ if ($Check_StagingDir -eq $False) {
 }
 Write-Host 'All directories created and files copied.'
 
-## Schedule Task for execution to establish persistence.
+## Schedule Task for execution to establish persistence and escalate via scheduled task.
 
 
 $TaskName = "Migrate_AltirisCEM"
