@@ -4,12 +4,28 @@
 ## Strictly proof of concept, requires to be logged in as local administrator account from a USB drive
 ## Can be easily adapted later for production use.
 
+## Establish Persistent Variables in user home folder
 
-## TODO: Set up persistence via Registry Keys for script location to cross over the escalation and run correctly
+if ({Test-Path -Path "~\DirPath.xml"} -eq $false) {
+  $PSCO = @{
+    SourceDir = (Get-Location).Path
+    StagingDir = 'C:\PostInstall\scripts\Migrate_AltirisCEM\'
+  }
+    $DirPath = [PSCustomObject]$PSCO
+    Export-Clixml -Path "~\DirPath.xml" -InputObject $DirPath
+}
 
-## Global Variables
+## Load Persistent Variables from current users Home directory.
 
-## Copy the required files over from USB drive.
+$DirPath = Import-Clixml -Path "~\DirPath.xml"
+
+## Remove previous directories for testing purposes and copy in files again.
+
+Remove-Item -Path $DirPath.StagingDir -Recurse -Force
+New-Item -Path $DirPath.StagingDir -ItemType Directory
+Copy-Item -Path "$DirPath.SourceDir" -Destination $StagingDir_Dest -Recurse -Force
+
+Write-Host 'All directories created and files copied.'
 
 ## Check and self escalate script to administrator. WILL TRIGGER UAC PROMPT.
 
@@ -23,13 +39,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdent
   & "$StagingDir\Migrate_AltirisCEM.ps1"
 
 $StagingDir_Dest = "C:\PostInstall\scripts\Migrate_AltirisCEM"
-$ErrorActionPreference = "SilentlyContinue"
 
-Remove-Item -Path $StagingDir -Recurse -Force
-New-Item -Path $StagingDir -ItemType Directory
-Copy-Item -Path "$StagingDir_Source\*" -Destination $StagingDir_Dest -Recurse -Force
-
-Write-Host 'All directories created and files copied.'
 
 $Check_AltirisCEM_InstallState = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Altiris\Communications\NS Connection\Non-Persistent' -Name "Host Name: Gateway"
 $Check_AltirisInstallPath = Test-Path -Path "C:\Program Files\Altiris\Altiris Agent"
