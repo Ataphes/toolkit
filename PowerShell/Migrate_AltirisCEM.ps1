@@ -4,20 +4,30 @@
 ## Strictly proof of concept, requires to be logged in as local administrator account from a USB drive
 ## Can be easily adapted later for production use.
 
+
+## TODO: Set up persistence via Registry Keys for script location to cross over the escalation and run correctly
+
 ## Global Variables
-
-$CurrDir = Get-Location
-$StagingDir = "C:\PostInstall\scripts\Migrate_AltirisCEM"
-
-$ErrorActionPreference = "SilentlyContinue"
 
 ## Copy the required files over from USB drive.
 
-$Check_StagingDir = Test-Path -LiteralPath "$StagingDir"
+## Check and self escalate script to administrator. WILL TRIGGER UAC PROMPT.
 
+If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator))
+{
+    # Relaunch as an elevated process:
+    Start-Process powershell.exe "-File",('"{0}"' -f $MyInvocation.MyCommand.Path) -Verb RunAs
+    exit
+  }
+  # Now running elevated so launch the script:
+  & "$StagingDir\Migrate_AltirisCEM.ps1"
+
+$StagingDir_Dest = "C:\PostInstall\scripts\Migrate_AltirisCEM"
+$ErrorActionPreference = "SilentlyContinue"
+
+Remove-Item -Path $StagingDir -Recurse -Force
 New-Item -Path $StagingDir -ItemType Directory
-Copy-Item -Path "$CurrDir\*" -Destination $StagingDir -Recurse -Force
-
+Copy-Item -Path "$StagingDir_Source\*" -Destination $StagingDir_Dest -Recurse -Force
 
 Write-Host 'All directories created and files copied.'
 
