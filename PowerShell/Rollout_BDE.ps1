@@ -18,5 +18,5 @@ if (($NetCheck).PingSucceeded -ne 'True') {
 if (($NetCheck).PingSucceeded -eq 'True') {
     Write-Host 'Device Connected to OSLAN, Proceeding with Bitlocker Deployment.'
     gpupdate /force
-##    Enable-Bitlocker -MountPoint "C:" -EncryptionMethod AES256 -UsedSpaceOnly –RecoveryPasswordProtector -WhatIf
+    Enable-Bitlocker -MountPoint "C:" -EncryptionMethod AES256 -UsedSpaceOnly –RecoveryPasswordProtector -WhatIf
 }
