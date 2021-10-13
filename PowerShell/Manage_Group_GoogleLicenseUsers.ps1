@@ -4,6 +4,7 @@
 # Variables
 $GroupList = @('G_FPS_Google_ALLAdministrators', 'G_FPS_Google_ALLESP', 'G_FPS_Google_ALLFASA', 'G_FPS_Google_ALLFEA', 'G_FPS_Google_AllNonUnit', 'G_FPS_Google_ALLSecretaries')
 $TargetGroup = 'G_FPS_Google_Education_License'
+$Cred = Get-Credential
 
 # Get unsorted user list from GroupList
 $UList = foreach ($Group in $GroupList) {
@@ -12,4 +13,4 @@ $UList = foreach ($Group in $GroupList) {
 
 # Sort, Deduplicate, and add users to target group.
 $UList_Sorted = $UList | Sort-Object | Get-Unique
-Add-ADGroupMember -Identity $TargetGroup -Members $UList_Sorted
+Add-ADGroupMember -Identity $TargetGroup -Members $UList_Sorted -Credential $Cred
