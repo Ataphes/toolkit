@@ -3,19 +3,14 @@
 
 # Variables
 
-$NetCheck = (Test-NetConnection -ComputerName "OSDC02.OS.Oaklandschools.net").PingSucceeded
+$NetCheck = (Test-NetConnection -ComputerName "OSDC02.OS.Oaklandschools.net" -WarningAction SilentlyContinue).PingSucceeded
 
 # Set execution policy for script.
 if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
     Write-Host "Execution Policy Misconfigured, Correcting..."
     Set-ExecutionPolicy RemoteSigned -Force
-}
-Write-Host "Execution Policy Set to Remote Signed, no action required."
-
-# Test connectivity to DC and stop script if 
-if ($NetCheck -eq $false) {
-    Write-Host "Not connected to OSLAN, Exiting"
-    exit 1
+} else {
+    Write-Host "Execution Policy Set to Remote Signed, no action required."
 }
 
 if ($NetCheck -eq $true) {
@@ -26,4 +21,7 @@ if ($NetCheck -eq $true) {
     Enable-Bitlocker -MountPoint C: -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector
     Write-Host "Enabled."
     exit 0
+} else {
+    Write-Host "Not connected to OSLAN, Exiting"
+    exit 1
 }
