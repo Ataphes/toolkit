@@ -10,7 +10,7 @@ $Cred = Get-Credential
 $UList = foreach ($Group in $GroupList) {
     (Get-ADGroupMember -Identity $Group).SamAccountName
 }
-
 # Sort, Deduplicate, and add users to target group.
 $UList_Sorted = $UList | Sort-Object | Get-Unique
+Write-Host Unique Accounts: ($Ulist_Sorted).Count
 Add-ADGroupMember -Identity $TargetGroup -Members $UList_Sorted -Credential $Cred

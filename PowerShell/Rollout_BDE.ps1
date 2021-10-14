@@ -12,7 +12,7 @@ $NetCheck = Test-NetConnection -computername osdc02.os.oaklandschools.net
 
 # Test connectivity to DC
 if (($NetCheck).PingSucceeded -ne 'True') {
-    Write-Host 'Device not connected to OSLAN'
+    throw "Device not connected to OSLAN, Exiting"
 }
 
 if (($NetCheck).PingSucceeded -eq 'True') {
