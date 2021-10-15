@@ -8,7 +8,7 @@
 
 #Variables
 
-$NetCheck_DC = "OSDC02.OS.Oaklandschools.net"
+$DC = "osdc02.os.oaklandschools.net"
 
 # Set execution policy for script.
 if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
@@ -19,17 +19,16 @@ if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
 }
 
 # Check if the machine is able to reach the Domain Controller and if so, enable BitLocker.
-$NetCheck = (Test-NetConnection -ComputerName $NetCheck_DC -WarningAction SilentlyContinue).PingSucceeded
-
-if ($NetCheck -eq $true) {
+Write-Host "Testing Connectivity to: $DC"
+if (-not $(Test-Connection $DC -ErrorAction SilentlyContinue)) {
+    Write-Host "Unable to communicate with the domain controller, Exiting"
+    exit 1
+} else {
     Write-Host "Device Connected to OSLAN, Updating Group Policy..."
     Invoke-GPUpdate -Force
     Write-Host "Done."
     Write-Host "Enabling Bitlocker Disk Encryption..."
     Enable-Bitlocker -MountPoint C: -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector
     Write-Host "Enabled."
-    exit 0
-} else {
-    Write-Host "Not connected to OSLAN, Exiting"
-    exit 1
+    exit 0    
 }
