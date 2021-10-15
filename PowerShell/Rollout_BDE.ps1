@@ -1,9 +1,14 @@
 ## Author: Joseph Walczak (Joseph.Walczak@oakland.k12.mi.us)
 ## Summary: Check if device is able to communicate with AD before BitLocker
 
-# Variables
+# TO DO
+## Check BitLocker implementation state.
+### Check if BDE is enabled, if so, end script there with 0 error code
+### If it's enabled, check AD for key status. If no key, sync key with AD and end script with 0 exit code.
 
-$NetCheck = (Test-NetConnection -ComputerName "OSDC02.OS.Oaklandschools.net" -WarningAction SilentlyContinue).PingSucceeded
+#Variables
+
+$NetCheck_DC = "OSDC02.OS.Oaklandschools.net"
 
 # Set execution policy for script.
 if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
@@ -12,6 +17,9 @@ if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
 } else {
     Write-Host "Execution Policy Set to Remote Signed, no action required."
 }
+
+# Check if the machine is able to reach the Domain Controller and if so, enable BitLocker.
+$NetCheck = (Test-NetConnection -ComputerName $NetCheck_DC -WarningAction SilentlyContinue).PingSucceeded
 
 if ($NetCheck -eq $true) {
     Write-Host "Device Connected to OSLAN, Updating Group Policy..."
