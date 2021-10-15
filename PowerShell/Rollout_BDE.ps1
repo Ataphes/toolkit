@@ -5,6 +5,7 @@
 ## Check BitLocker implementation state.
 ### Check if BDE is enabled, if so, end script there with 0 error code
 ### If it's enabled, check AD for key status. If no key, sync key with AD and end script with 0 exit code.
+## Check for Service Account presence in the Local Administrators group.
 
 #Variables
 
