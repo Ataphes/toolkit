@@ -35,9 +35,9 @@ $AllApps = Get-ItemProperty $RegApps -EA 0
 $AD_Apps = $AllApps | Where { ($_.Publisher -like "*Autodesk*") -and ($_.PSChildName) -match "{" }
 $Arr_AD_ProdID = Out-String -InputObject $AD_Apps.PSChildName -Stream -Width 38
 
-foreach ($i in $Arr_AD_ProdID) {
-Write-Host Attempting to uninstall Product ID: $i ...
-Start-Process -FilePath C:\Windows\System32\msiexec.exe -ArgumentList "/x $i /qn /LI+ C:\AutoDesk_Uninstall.log" -NoNewWindow -Wait
+foreach ($ProdID in $Arr_AD_ProdID) {
+Write-Host Attempting to uninstall Product ID: $ProdID ...
+Start-Process -FilePath C:\Windows\System32\msiexec.exe -ArgumentList "/x $ProdID /qn /LI+ C:\AutoDesk_Uninstall.log" -NoNewWindow -Wait
 }
 Write-Host "Done. Please check C:\AutoDesk_Uninstall.log for more details.`n"
 
@@ -52,6 +52,10 @@ Write-Host "Done.`n"
 ## Clean up registry keys relating to AutoDesk Products including uninstall records since we purge the remainder of the files in the previous step.
 Write-Host "Cleaning up remaining registry entries."
 Remove-Item -Path HKLM:\SOFTWARE\Autodesk -Recurse -Force
+foreach ($ProdID in $Arr_AD_ProdID) {
+    Remove-Item -Path HKLM:\Software\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\$ProdID -Recurse -Force
+    Remove-Item -Path HKLM:\Software\Microsoft\Windows\CurrentVersion\Uninstall\$ProdID -Recurse -Force
+}
 Write-Host "Done.`n"
 
-## Restart-Computer -Wait 0
+Restart-Computer -Wait 0
