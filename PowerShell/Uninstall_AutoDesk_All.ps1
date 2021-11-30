@@ -1,5 +1,5 @@
-## AutoDesk Removal Script
-## Remove ALL AutoDesk Products from a machine with EXTREME gusto.
+## AutoDesk Purge Script
+## Purge ALL AutoDesk Products from a machine with EXTREME gusto.
 ## Author: Joseph Walczak (Joseph.Walczak@oakland.k12.mi.us)
 
 ## Safety Off, Full Send.
