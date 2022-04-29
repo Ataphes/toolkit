@@ -17,7 +17,7 @@ $L_BitLockerRecoveryKey = ((Get-BitLockerVolume -MountPoint $SysDrive ).KeyProte
 write-output "Checking Bitlocker Status..."
 if ($L_BitLockerRecoveryKey -eq $null) {
     write-output "No Bitlocker Recovery Key present, enabling BitLocker..."
-    ## Check for DC connectivity before proceeding.
+## Check for DC connectivity before proceeding.
     write-output "Testing Connectivity to: $DC"
     if (-not $(Test-Connection $DC -ErrorAction SilentlyContinue)) {
         Write-Output "Unable to communicate with the domain controller, exiting."
@@ -27,7 +27,7 @@ if ($L_BitLockerRecoveryKey -eq $null) {
     else {
         Write-Output "Connection to $DC Successful!"
     }
-    ## Enabling Bitlocker if all other checks are passed.
+## Enabling Bitlocker if all other checks are passed.
     Write-Output "Enabling Bitlocker Disk Encryption, Please wait..."
     Enable-Bitlocker -MountPoint $SysDrive -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector > out-null
     Write-Output "Bitlocker enabled on host, key will be communicated automatically"
