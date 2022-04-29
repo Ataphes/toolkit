@@ -2,7 +2,8 @@
 ## Summary: Check if device is able to communicate with AD before BitLocker
 
 # TO DO
-## Check BitLocker implementation state.
+## Check BitLocker implementation state. 
+### Working on this today -JW, 04.29.22
 ### Check if BDE is enabled, if so, end script there with 0 error code
 ### If it's enabled, check AD for key status. If no key, sync key with AD and end script with 0 exit code.
 ## Check for Service Account presence in the Local Administrators group.
@@ -10,6 +11,9 @@
 #Variables
 
 $DC = "osdc02.os.oaklandschools.net"
+
+## Detect if Bitlocker has already been enabled and if so, do nothing. Else, fix it or something.
+
 
 # Set execution policy for script.
 if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
