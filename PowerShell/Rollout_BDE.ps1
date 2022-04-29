@@ -1,48 +1,41 @@
 ## Author: Joseph Walczak (Joseph.Walczak@oakland.k12.mi.us)
-## Summary: Check if device is able to communicate with AD before BitLocker
+## Summary: Check for and enforce bitlocker disk encryption on hosts.
 
 # TO DO
-## Check BitLocker implementation state. 
-### If it's enabled, check AD for key status. If no key, sync key with AD and end script with 0 exit code.
-## Check for Service Account presence in the Local Administrators group.
+## check AD for key status. If key is mismatched or does not exist, send updated recovery key.
 ## Check for closest site server and use that for ping check.
+## Actually write proper error handling.
 
-#Variables
+## Check for connectivity to nearest domain controller.
 
-$DC = "osdc02.os.oaklandschools.net"
+$DC = (Get-ADDomainController -NextClosestSite -Discover -DomainName "os.oaklandschools.net").hostname
+$SysDrive = $ENV:SYSTEMDRIVE
+$L_BitLockerRecoveryKey = ((Get-BitLockerVolume -MountPoint $SysDrive ).KeyProtector).RecoveryPassword
 
 ## Detect if Bitlocker has already been enabled and if so, do nothing. Else, fix it or something.
-
-## Check presence of BitLocker recovery key and store for later use and for testing for null values
-$L_BitLockerRecoveryKey = ((Get-BitLockerVolume -MountPoint $env.SystemDrive).KeyProtector).RecoveryPassword
 
 write-output "Checking Bitlocker Status..."
 if ($L_BitLockerRecoveryKey -eq $null) {
     write-output "No Bitlocker Recovery Key present, enabling BitLocker..."
+    ## Check for DC connectivity before proceeding.
+        write-output "Testing Connectivity to: $DC"
+    if (-not $(Test-Connection $DC -ErrorAction SilentlyContinue)) {
+        Write-Output "Unable to communicate with the domain controller, exiting."
+        exit 1
+        throw
+    }
+    else {
+        Write-Output "Connection to $DC Successful!"
+    }
+    ## Enabling Bitlocker if all other checks are passed.
+    Write-Output "Enabling Bitlocker Disk Encryption, Please wait..."
+    Enable-Bitlocker -MountPoint $SysDrive -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector > out-null
+    Write-Output "Bitlocker enabled on host, key will be communicated automatically"
+    exit 0
+    throw
 }
 else {
-    write-output "Bitlocker Key Found, No further action required. Exiting now..."
+    Write-Output "Bitlocker Key Found, No further action required. Exiting now..."
     exit 0
-    throw "Bitlocker Key Found, No further action required. Exiting now..."
-}
-
-# Set execution policy for script.
-if ((Get-ExecutionPolicy) -ne 'RemoteSigned') {
-    write-output "Execution Policy Misconfigured, Correcting..."
-    Set-ExecutionPolicy RemoteSigned -Force
-} else {
-    write-output "Execution Policy Set to Remote Signed, no action required."
-}
-
-# Check if the machine is able to reach the Domain Controller and if so, enable BitLocker.
-write-output "Testing Connectivity to: $DC"
-if (-not $(Test-Connection $DC -ErrorAction SilentlyContinue)) {
-    write-output "Unable to communicate with the domain controller, Exiting"
-    exit 1
-} else {
-    write-output "Done."
-    write-output "Enabling Bitlocker Disk Encryption..."
-    Enable-Bitlocker -MountPoint C: -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector
-    write-output "Enabled."
-    exit 0    
+    throw
 }
