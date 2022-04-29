@@ -18,7 +18,7 @@ write-output "Checking Bitlocker Status..."
 if ($L_BitLockerRecoveryKey -eq $null) {
     write-output "No Bitlocker Recovery Key present, enabling BitLocker..."
     ## Check for DC connectivity before proceeding.
-        write-output "Testing Connectivity to: $DC"
+    write-output "Testing Connectivity to: $DC"
     if (-not $(Test-Connection $DC -ErrorAction SilentlyContinue)) {
         Write-Output "Unable to communicate with the domain controller, exiting."
         exit 1
