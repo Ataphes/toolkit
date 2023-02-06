@@ -19,12 +19,12 @@ Start-Process -FilePath CleanMgr.exe -ArgumentList '/sagerun:1' -WindowStyle Hid
 Write-Host 'Waiting for CleanMgr and DismHost processes. Second wait neccesary as CleanMgr.exe spins off separate processes.'
 Get-Process -Name cleanmgr,dismhost -ErrorAction SilentlyContinue | Wait-Process
 
-## $UpdateCleanupSuccessful = $false
-## if (Test-Path $env:SystemRoot\Logs\CBS\DeepClean.log) {
-##   $UpdateCleanupSuccessful = Select-String -Path $env:SystemRoot\Logs\CBS\DeepClean.log -Pattern 'Total size of superseded packages:' -Quiet
-## }
+## End of Clean Manager phase
 
-## if ($UpdateCleanupSuccessful) {
-##   Write-Host 'Rebooting to complete CleanMgr.exe Update Cleanup....'
-##    SHUTDOWN.EXE /r /f /t 0 /c 'Rebooting to complete CleanMgr.exe Update Cleanup....'
-## }
+## OS Specific Clean Up ##
+
+$DTBR = "C:\PostInstall\*", "C:\AutoDesk"
+
+foreach ($DIR in $DTBR) {
+   Remove-Item -Path $DIR -ArgumentList 
+}
