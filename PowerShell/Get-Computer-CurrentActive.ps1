@@ -4,10 +4,8 @@ write-host "
 ## Purpose: Get active machines in a selected OU from AD. ##
 "
 
-$OU = Read-Host -Prompt "Enter the Distinguished Name of the OU you would like to query. EX. 'OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net'...
-"
-$DaysSinceLastLogin = Read-Host -Prompt "Enter the amount of days back you want to find machines that have logged in. EX. '180'...
-"
+$OU = "OU=FPSComputers,OU=Farmington,DC=os,DC=oaklandschools,DC=net"
+$DaysSinceLastLogin = "180"
 $OutputPath = "~\Desktop\ActiveADComputers.csv"
 
 ## Do Not Edit Below This Line ##
