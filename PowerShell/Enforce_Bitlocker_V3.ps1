@@ -8,16 +8,16 @@ function Time {
     return Get-Date
 }
 # Check key status.
-function L_BitLockerRecoveryKey {
+function Get-LocalKey {
     ((Get-BitLockerVolume -MountPoint $SysDrive ).KeyProtector).RecoveryPassword
 }
-function R_BitLockerRecoveryKey {
+function Get-RemoteKey {
     Get-ADObject -Filter 'ObjectClass -eq "msFVE-RecoveryInformation"' -SearchBase $AD_CurrentMachine.DistinguishedName -Properties whenCreated, msFVE-RecoveryPassword | Sort-Object whenCreated -Descending | Select-Object -First 1 -ExpandProperty msFVE-RecoveryPassword
 }
 function Display_BitLockerRecoveryKeys {
     Write-Output "
-Local Recovery Key: $(L_BitLockerRecoveryKey)
-Remote Recovery Key: $(R_BitLockerRecoveryKey)
+Local Recovery Key: $(Get-LocalKey)
+Remote Recovery Key: $(Get-Remote)
 "
 }
 
@@ -54,16 +54,6 @@ Write-Output "$(Time) | Checking Recovery Key Status..."
 $SysDrive = $ENV:SYSTEMDRIVE
 $AD_CurrentMachine = Get-ADComputer $ENV:COMPUTERNAME
 
-if ($(L_BitLockerRecoveryKey) -eq $(R_BitLockerRecoveryKey)) {
-    Write-Output "$(Time) | Local Recovery Key matches Remote Recovery Key, No Action Required. Exiting..."
-    $(Display_BitLockerRecoveryKeys)
-    Exit 0
-}
-else {
-    Write-Output "$(Time) | BitLocker Recovery Keys are Mismatched or Missing. Attempting to Generate and Sync New Recovery Key..."
-    $(Display_BitLockerRecoveryKeys)
-}
-
 if (-not $(Get-RemoteKey -ReturnRecoveryKey) -or -not $(Get-RemoteKey -ReturnRecoveryKey) -or $(Get-LocalKey -ReturnRecoveryKey) -ne $(Get-RemoteKey -ReturnRecoveryKey)) {
     Write-Output "$(Get-TimeStamp) | BitLocker Recovery Keys are Mismatched or Missing. Attempting to Generate and Sync New Recovery Key..."
     if (-not $(Get-RemoteKey -ReturnRecoveryKey)) {
@@ -76,9 +66,3 @@ if (-not $(Get-RemoteKey -ReturnRecoveryKey) -or -not $(Get-RemoteKey -ReturnRec
     }
 }
 
-## Enabling Bitlocker if all other checks are passed.
-##Write-Output "$(Time) | Enabling Bitlocker Disk Encryption, Please wait..."
-##Enable-Bitlocker -MountPoint $SysDrive -EncryptionMethod AES256 -UsedSpaceOnly -RecoveryPasswordProtector -WarningAction SilentlyContinue -ErrorAction SilentlyContinue > $null
-##Write-Output "$(Time) | Bitlocker Enabled, Recovery Key Communicated to Active Directory"
-##$(Display_BitLockerRecoveryKeys)
-##exit 0
