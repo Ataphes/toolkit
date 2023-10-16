@@ -10,17 +10,19 @@
 ## Modules
 import-module activedirectory
 
+##Inputs
+$RoleInput = Read-Host "Please input the title from the description you'd like to query"
 ## Vars
-$ouInput = Read-Host "Please input the fully qualified OU path"
+$ouInput = "OU=FPSStaff,OU=Farmington,DC=os,DC=oaklandschools,DC=net"
 ## Percentage of users with selected group. Accepts values 0.0 to 1.0 .
 $membershipRatio = .8
 
 ## Prompts user to input credentials for use later in the script. Need to find out if creds are stored in plain text or not.
-$C = Get-Credential
+## $C = Get-Credential
 
 ## Counts how many users are in the selected OU, Applys the tunable ratio, 
 ## and rounds to the nearest whole number
-$ouUsers = Get-ADUser -Filter * -SearchBase $ouInput -Credential $C
+$ouUsers = Get-ADUser -Filter 'Description -like $RoleInput' -SearchBase $ouInput
 $ouUserCount = $ouUsers.SamAccountName | Measure-Object -Line
 $membershipAdjustedRaw = $ouUserCount.Lines * $membershipRatio
 $membershipAdjustedRounded = [math]::Round($membershipAdjustedRaw)
