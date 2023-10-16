@@ -11,7 +11,7 @@
 import-module activedirectory
 
 ## Vars
-$ouInput = 'Insert OU path here'
+$ouInput = Read-Host "Please input the fully qualified OU path"
 ## Percentage of users with selected group. Accepts values 0.0 to 1.0 .
 $membershipRatio = .8
 
