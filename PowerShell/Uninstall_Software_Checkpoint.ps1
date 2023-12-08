@@ -3,7 +3,7 @@
 
 ## Control Vars
 
-$PubName = "Publisher"
+$PubName = "*Check Point Software*"
 
 ## Do Not Modify Below This Line
 
@@ -14,5 +14,5 @@ $Arr_AD_ProdID = Out-String -InputObject $AD_Apps.PSChildName -Stream -Width 38
 
 foreach ($ProdID in $Arr_AD_ProdID) {
 Write-Host Attempting to uninstall Product ID: $ProdID ...
-Start-Process -FilePath C:\Windows\System32\msiexec.exe -ArgumentList "/x $ProdID /qn /LI+ C:\Pub_Uninstall.log" -NoNewWindow -Wait
+Start-Process -FilePath C:\Windows\System32\msiexec.exe -ArgumentList "/x $ProdID /qn /norestart /LI+ C:\Pub_Uninstall.log" -NoNewWindow -Wait
 }
