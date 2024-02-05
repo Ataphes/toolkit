@@ -1,31 +1,16 @@
-## Purpose: Updates the detected system drivers (Including the BIOS) safely without triggering bitlocker on reboot from the driver library provided by Microsoft's Windows Update servers.
-## Author: Joseph Walczak (Joseph.Walczak@Oakland.k12.mi.us)
-
-## Module Import
-Install-PackageProvider -Name NuGet -Force
-Install-Module -Name PSWindowsUpdate -Force
-Install-Module -Name PendingReboot -Force
-
-## Runs Windows Udpate and installs all Drivers found by the tool and reboots the machine if an update flags a reboot as required.
- Install-WindowsUpdate -AcceptAll -Category Drivers -Verbose
-
-## Checks if a reboot is pending for whatever reason and if so, restart the machine.
-if ($(Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending) {
-    $encryptedVolumes = Get-BitLockerVolume | Where-Object {$_.ProtectionStatus -eq 'On'}
-    
-    # Suspend BitLocker protection for each encrypted volume for one reboot
-    foreach ($volume in $encryptedVolumes) {
-        $volumeDriveLetter = $encryptedVolumes.MountPoint
-        Suspend-BitLocker -MountPoint $volumeDriveLetter -Confirm:$false -RebootCount 1
+﻿$global:newname = ""
+$fpath = "\\Osshare\ossmc$\Farmington\Name_Serial.csv"
+$csv = Import-Csv -Path $fpath 
+$csv | ForEach-Object {
+    if ("%SERIALNUMBER%" -eq $_.Serial) {
+        $global:newname = $_.Name
     }
-    Restart-Computer -Force
 }
-
 # SIG # Begin signature block
 # MIISeAYJKoZIhvcNAQcCoIISaTCCEmUCAQExDzANBglghkgBZQMEAgEFADB5Bgor
 # BgEEAYI3AgEEoGswaTA0BgorBgEEAYI3AgEeMCYCAwEAAAQQH8w7YFlLCE63JNLG
-# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCDFiYolGt1xQegu
-# HtWdyrXpimLeQ3NWzxCG1EGgSZ3eaqCCDp8wggawMIIEmKADAgECAhAIrUCyYNKc
+# KX7zUQIBAAIBAAIBAAIBAAIBADAxMA0GCWCGSAFlAwQCAQUABCCsj1/9J6dmBt+L
+# gX7BFrbhXw1DsnI8SmHz8rFPhjkCsqCCDp8wggawMIIEmKADAgECAhAIrUCyYNKc
 # TJ9ezam9k67ZMA0GCSqGSIb3DQEBDAUAMGIxCzAJBgNVBAYTAlVTMRUwEwYDVQQK
 # EwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xITAfBgNV
 # BAMTGERpZ2lDZXJ0IFRydXN0ZWQgUm9vdCBHNDAeFw0yMTA0MjkwMDAwMDBaFw0z
@@ -108,17 +93,17 @@ if ($(Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending) 
 # dCBUcnVzdGVkIEc0IENvZGUgU2lnbmluZyBSU0E0MDk2IFNIQTM4NCAyMDIxIENB
 # MQIQA+cRF5PaWbOQRSUMoP5MkzANBglghkgBZQMEAgEFAKCBhDAYBgorBgEEAYI3
 # AgEMMQowCKACgAChAoAAMBkGCSqGSIb3DQEJAzEMBgorBgEEAYI3AgEEMBwGCisG
-# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCAcdQ5eB8lf
-# zfqcv08eJ46oPfjDm8Ve36Om9tlT54OvhjANBgkqhkiG9w0BAQEFAASCAgAOsiL1
-# r3OEONA37nQXTu97NU7XtUKxk30PYvGlXmSG2iJAAdk+fv3PgAd1Ji7liOTehfnp
-# d6BWSLVbohYpiSn9sVsQMeLHv012UONuWWKQH4nGSdjRPFyQ3GuV2kEPu+UCUkzR
-# RNGrFZf5HE5uVEy9RRo+3d0pF9ZYq+93Zo05dSuctsRAHG+N0+6F2q+7xOd19dNX
-# VnCFdGbM19dxvkRsU1aBvNwSW/Wa06o3psnl3xNtxT4yxDEB2uqCK7pbzuWvOnUn
-# NksRJ6gbLuvJLRJADrIiZy0Hph9u+DZ6ySQlauhqQ2A7xGtSN0HktMc5/1HkQGkb
-# 2qEUo3ginOLLM8CD8sjqUyFinpcR67esnWjBNc6LRA3K4WC/KykhYkifgy2ibqtT
-# 8J+RgG77U2au815kcL7eqavch1aSJvjFOtvt9xrnl4y/wRnA+fCfpNYwvsv/glPn
-# 8lqwKYTvZOs6Qh6eYMgLeiH0YpgfVPIaFqkF6va0iC0egOTvoyTe6+ZDoaO6n7re
-# YC2SCAIqjciKKVTcHNgFRd28AqeyPwQDUb6RLZrJQQuTSas0tsr6f+n4m8RqnsgL
-# fwr4Qmfm3WJCpkFssT+47HTCP0M3fPWckXr1nm3q6G5H4fpKga+5o8c2VZgVnePy
-# M5qkRYcDGR2udDLC8weIh++i1XUVtFXrr5NYRA==
+# AQQBgjcCAQsxDjAMBgorBgEEAYI3AgEVMC8GCSqGSIb3DQEJBDEiBCCIXLkhCVgr
+# V4wX4yyqwjLwCex2P7h6jGXAcPUhZ7slKjANBgkqhkiG9w0BAQEFAASCAgAEZCQg
+# xVKQYSjqS8iZQRoOBVyByqbqUt+GvPmsmhjCpdGtXKz6jr/0rNdGjSffSr9xAeuw
+# pGFOYxI2xNpXe0NJ4X6ta12na3jMswT0ypl5vnhrNNAplC1zCjIYiC9FROMVaTiZ
+# 5idqxr5F65gglxE/DG3tiH66NTnX8MTzsMkA6xWfiXn6xXPn8nM0woP/qwDacwFj
+# 4ZD8G+PMd0k/Hl5ecMAbbsUwUHce3jcWfbeaX8XaAqWWUO4GnkSeUECToqzHPdcS
+# G2L+VQsjkvEeEgLRI+1SpWrRDPwaFQNZJLfX0R/WvWRkIV/QjUDnTSYP2Ui507NC
+# IoYeYqsbkpXtkYqLqx+TKJj9dafEMHznoOKVAGygZ3YesG/oj7mhUW176zvppMg/
+# bCWnmqzuu5vRi1Ois2xpn/9LhvEECLIuV2QzSHgPLoEqTHSog5KnytZTi8BjYrCi
+# bCB0HZVhH87KgiX1PZtWpDptEmCOF4gC8KiUWa+21khV62QUvwk3jpDr+0f4HDsJ
+# re/+Sh5N/34H93NZoSXsy4t1vTi23dBwt5Yr56axKZNkl3pPeOsMQwQ2BnvAVeFI
+# q5QJ6aopaSvOcgk21tZizhMpUljgT9ZDr9Fpgg6SgSIkKeN9H7tRN/a9h6HXiIuf
+# cHVrGsVWahSKRK5idztfwn747O4r1d8e2vdc+A==
 # SIG # End signature block

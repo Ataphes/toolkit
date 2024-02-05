@@ -1,0 +1,1 @@
+Get-ADGroupMember -Identity G_ROY_Duo | ForEach-Object {Get-ADuser -Identity $_.SamAccountName} | Select-Object -Property GivenName,Surname,SAMAccountName,UserPrincipalName | export-csv -Path "~\Desktop\Get-ADUser-G_ROY_Duo.csv" -NoTypeInformation

@@ -31,9 +31,9 @@ function Get-ExtensionInfo {
         }
             
         [PSCustomObject][Ordered]@{
-        Name                = $Title
-        ID                  = $ExtID
-        ComputerName        = $userProfile.PSComputerName
+        Name        = $Title
+        ID          = $ExtID
+        HostName    = $UserProfile.PSComputerName
     }
 }
 
@@ -48,7 +48,7 @@ $allExtensionIds = @()
 # Iterate through each user profile
 foreach ($userProfile in $userProfiles) {
     # Construct the path to the Chrome profiles folder for the current user
-    $userChromeProfilesPath = Join-Path -Path $userProfile.LocalPath -ChildPath "AppData\Local\Google\Chrome\User Data"
+    $userChromeProfilesPath = Join-Path -Path $userProfile.LocalPath -ChildPath "AppData\Local\Google\Chrome\User Data" -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
 
     # Check if the Chrome profiles folder exists for the current user
     if (Test-Path $userChromeProfilesPath) {
@@ -63,19 +63,17 @@ foreach ($userProfile in $userProfiles) {
             # Check if the Chrome extensions folder exists for the current profile
             if (Test-Path $profileChromeExtensionsPath) {
                 # Get all subdirectories (extension IDs) under the Chrome extensions folder for the current profile
-                $ExtID = Get-ChildItem -Path $profileChromeExtensionsPath -Directory | ForEach-Object { $_.Name }
+                $extensionIds = Get-ChildItem -Path $profileChromeExtensionsPath -Directory | ForEach-Object { $_.Name }
 
                 # Add extension IDs to the array
-                $allExtensionIds += $ExtID
+                $allExtensionIds += $extensionIds
             }
         }
     }
 }
 
-$ExtID
-
-#Check all extension ID
-foreach ($ExtId in $allExtensionIds) {
-    Get-ExtensionInfo $ExtId | Export-Csv -Path "\\powershell\Exports\FAR\Export-ChromeExtensionReport\Export-ChromeExtensionReportV2.csv" -NoTypeInformation -Append
-    get-ExtensionInfo $ExtId
-}
+# Check all extension ID
+    foreach ($ExtId in $allExtensionIds) {
+        #Get-ExtensionInfo $ExtId | Export-Csv -Path "\\powershell\Exports\FAR\Export-ChromeExtensionReport\Export-ChromeExtensionReportV2.csv" -NoTypeInformation -Append
+        Get-ExtensionInfo $ExtId
+    }
